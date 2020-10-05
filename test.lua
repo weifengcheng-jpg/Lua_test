@@ -475,9 +475,160 @@ print(string.sub(s, string.find(s, date)))
 print(string.gsub("hello, up-down!", "%A", "."))
 
 Lua 数组
+array = { "Lua", "Tutorial" }
 
+for i = 0, 2 do
+    print(array[i])
+end
 
+array = {}
+
+for i = -2, 2 do 
+    array[i] = i * 2
+end
+
+for i = -2, 2 do 
+    print(array[i])
+end
+
+Lua 迭代器
+array = {"Google", "Runoob"}
+
+for k, v in ipairs(array) do
+    print(k, v)
+end
+
+function square(iteratorMaxCount, currentNumber)
+    if currentNumber<iteratorMaxCount then
+        currentNumber = currentNumber + 1
+    return currentNumber, currentNumber*currentNumber
+    end
+end
+
+for i, n in square,3,0 do
+    print(i, n)
+end
+
+function iter(a, i)
+    i = i + 1
+    local v = a[i]
+    if v then
+        return i, v
+    end
+end
+
+function ipairs(a)
+    return iter, a, 0
+end
+
+array = {"Google", "Runoob"}
+
+function elementIterator(collection)
+    local index = 0
+    local count = #collection 
+    -- 闭包函数
+    return function()
+        index = index + 1
+        if index <= count then
+            -- 返回迭代器的当前元素
+            return collection[index]
+        end
+    end 
+end
+
+for element in elementIterator(array) do
+    print(element)
+end
+
+Lua table 
+mytable = {}
+print("mytable 的类型是 ", type(mytable))
+
+mytable[1] = "Lua"
+mytable["wow"] = "修改前"
+print("mytable 索引为 1 的元素是 ", mytable[1])
+print("mytable 索引为 wow 的元素是 ", mytable["wow"])
+
+-- alternatetable和mytable的是指同一个 table 
+alternatetable = mytable 
+
+print("alternatetable 索引为1的元素是 ", alternatetable[1])
+print("mytable 索引为 wow 的元素是 ", alternatetable["wow"])
+
+alternatetable["wow"] = "修改后"
+
+print("mytable 索引为 wow 的元素是 ", mytable["wow"])
+
+-- 释放变量 
+alternatetable = nil 
+print("alternatetable是 ", alternatetable)
+
+-- mytable 仍然可以访问 
+print("mytable 索引为 wow 的元素是 ", mytable["wow"])
+
+mytable = nil 
+print("mytable 是 ", mytable)
+
+fruits = { "banana", "orange", "apple" }
+-- 返回 table 连接后的字符串
+print("连接后的字符串 ", table.concat(fruits))
+
+-- 指定连接的字符
+print("连接后的字符串 ", table.concat(fruits, ", "))
+
+-- 指定索引来连接 table 
+print("连接后的字符串 ", table.concat(fruits, ", ", 2, 3))
+
+fruits = { "banana", "orange", "apple" }
+
+-- 在末尾插入
+table.insert(fruits, "mango")
+print("索引为 4 的元素为 ", fruits[4])
+
+-- 在索引为2的键处插入
+table.insert(fruits, 2, "grapes")
+print("索引为 2 的元为 ", fruits[2])
+
+print("最后一个元素为 ", fruits[5])
+table.remove(fruits)
+print("移除后最后一个元素为 ", fruits[5])
+
+fruits = { "banana", "orange", "apple", "grapes" }
+print("排列前")
+for k, v in ipairs(fruits) do 
+    print(k, v)
+end
+
+table.sort(fruits)
+print("排列后")
+for k, v in ipairs(fruits) do
+    print(k, v)
+end
+
+function table_maxn(t)
+    local mn = nil 
+    for k, v in pairs(t) do
+        if (mn == nil) then 
+            mn = v
+        end
+        if mn < v then 
+            mv = v
+        end
+    end
+    return mv 
+end
+
+tb1 = { [1] = 2, [2] = 6, [3] = 34, [26] = 5 }
+print("tb1 最大值: ", table_maxn(tb1))
+print("tb1 长度: ", #tb1)
+
+Lua 模块与包
 --]]
+
+
+
+
+
 
 
 
