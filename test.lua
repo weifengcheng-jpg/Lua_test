@@ -1,4 +1,3 @@
-
 --print("hello world!");
 
 --库函数 type 用于以字符串形式返回给定值的类型。
@@ -623,8 +622,6 @@ print("tb1 最大值: ", table_maxn(tb1))
 print("tb1 长度: ", #tb1)
 
 Lua 模块与包
---]]
-
 -- 文件名为 module.lua 
 -- 定义一个名为 module 的模块
 module = {}
@@ -646,6 +643,386 @@ function module.func3()
 end
 
 return module
+
+mytable = setmetatable({key1 = "value1"}, {
+    __index = function(mytable, key)
+        if key == "key2" then
+        return "metatablevalue"
+    else
+        return nil
+    end
+end
+})
+
+print(mytable.key1, mytable.key2)
+
+mytable = setmetatable( {key1 = "valuel"}, { __index = {key2 = "metatablevalue"} } )
+print(mytable.key1, mytable.key2)
+
+mymetatable = {}
+mytable = setmetatable({key1 = "value1"}, { __newindex = mymtatable })
+
+print(mytable.key1)
+
+mytable.newkey = "新值2"
+print(mytable.newkey, mymtatable.newkey)
+
+mytable.key1 = "新值1"
+print(mytable.key1, mymetatable.key1)
+
+mymetatable = {}
+mytable = setmetatable({key1 = "value1"}, { __newindex = mymetatable })
+
+print(mytable.key1)
+
+mytable.newkey = "新值2"
+print(mytable.newkey,mymetatable.newkey)
+
+mytable.key1 = "新值1"
+print(mytable.key1,mymetatable.key1)
+
+mytable = setmetatable( {key1 = "value1"}, {
+    __newindex = function(mytable, key, value)
+        rawset(mytable, key, "\""..value.."\"")
+
+    end 
+} )
+
+mytable.key1 = "new value"
+mytable.key2 = 4
+
+
+print(mytable.key1, mytable.key2)
+
+mytable = setmetatable({key1 = "value1"}, {
+    __newindex = function(mytable, key, value)
+        rawset(mytable, key, "\""..value.."\"")
+    end 
+})
+
+mytable.key1 = "new value"
+mytable.key2 = 4
+
+print(mytable.key1, mytable.key2)
+
+-- 计算表中最大值, table.maxn在Lua.5.2以上版本中已无法使用
+-- 自定义计算表中最大键值函数 table_maxn, 即计算表的元素个数
+function table_maxn(t)
+    local mn = 0
+    for k, v in pairs(t) do 
+        if mn < k then
+            mn = k
+        end
+    end
+    return mn 
+end
+
+-- 两表相加操作 
+mytable = setmetatable({1, 2, 3}, {
+    __add = function(mytable, newtable)
+        for i = 1, table_maxn(newtable) do
+            table.insert(mytable, table_maxn(mytable)+1, newtable[i])
+    end
+    return mytable
+end
+})
+
+secondtable = {4, 5, 6}
+
+mytable = mytable + secondtable
+for k, v in ipairs(mytable) do
+    print(k, v)
+end
+
+-- 计算表中的最大值, table.maxn在Lua5.2以上版本中已无法使用
+-- 自定义计算表中的最大键建值函数 table_maxn, 级计算表的元素个数 
+function table_maxn(t)
+    local mn = 0
+    for k, v in ipairs(t) do 
+        if mn < k then
+            mn = k
+        end
+    end
+    return mn 
+end
+
+-- 定义元方法 
+mytable = setmetatable({10}, {
+    __call = function(mytable, newtable)
+        sum = 0
+        for i = 1, table_maxn(mytable) do
+            sum = sum + mytable[i]
+        end
+    for i = 1, table_maxn(newtable) do
+        sum = sum + newtable[i]
+    end
+    return sum 
+end 
+})
+
+newtable = {10, 20, 30}
+print(mytable(newtable))
+
+mytable = setmetatable({key1 = "value1"}, {
+    __index = function(mytable, key)
+        if key == "key2" then 
+            return "metatablevalue"
+        else 
+            return nil 
+        end 
+    end
+})
+
+print(mytable.key1, mytable.key2)
+
+mytable = setmetatable({key1 = "valklue1"}, { __index = { key2 = "metatablevalue" } })
+print(mytable.key1, mytable.key2)
+
+mytable = setmetatable( {10, 20, 30}, {
+    __tostring = function(mytable)
+    sum = 0
+    for k, v in pairs(mytable) do
+        sum = sum + v
+    end
+    return "表所有元素的和为 " .. sum 
+end
+} )
+
+print(mytable)
+
+Lua 文件I/O 
+-- 以只读方式打开文件
+file = io.open("test.lua", "r")
+
+-- 设置默认输入文件为 test.lua 
+io.input(file)
+
+-- 输出文件第一行 
+print(io.read())
+
+-- 关闭打开的文件 
+io.close(file)
+
+-- 以附加的方式打开只写文件
+file = io.open("test.lua", "a")
+
+-- 设置默认输出文件为 test.lua    
+io.output(file)
+
+-- 在文件最后一行添加 Lua 注析
+io.write("-- test.lua 文件末尾注析")
+
+-- 关闭打开的文件
+io.close(file)
+
+-- test.lua 文件末尾注析
+-- test.lua 文件末尾注析
+-- 以只读方式打开文件
+file = io.open("test.lua", "r")
+
+-- 
+
+Lua 错误处理
+local function add(a, b)
+    assert(type(a) == "number", "a 不是一个数字")
+    assert(type(b) == "number", "b 不是一个数字")
+    return a + b
+end
+
+add(10, 1)
+
+pcall(function(i) print(i) end, 33)
+
+function myfunction()
+    n = n / nil 
+end
+
+function myerrorhandler(err) 
+    print("error: ", err)
+end
+
+status = xpcall(myfunction, myerrorhandler)
+print(status)
+
+function myfunction()
+    print(debug.traceback("Stack track"))
+    print(debug.getinfo(1))
+    print("Stack trace end")
+    return 10
+end
+
+myfunction()
+print(debug.getinfo(1))
+
+function newCounter()
+    local n = 0
+    local k = 0
+    return function()
+        k = n
+        n = n + 1
+        return n
+    end 
+end
+
+counter = newCounter()
+print(counter())
+print(counter())
+
+local i = 1
+
+repeat
+    name, val = debug.getupvalue(counter, i)
+    if name then
+        print("index", i, name, "=", val)
+        if (name == "n") then 
+            debug.setupvalue(counter, 2, 10)
+        end
+        i = i + 1
+    end
+until not name 
+
+print(counter())
+
+Lua 调试(Debug)
+function myfunction()
+    print(debug.traceback("Stack trace"))
+    print(debug.getinfo(1))
+    print("Stack trace end")
+        return 10
+end
+
+myfunction()
+print(debug.getinfo(1))
+
+Lua 垃圾回收
+mytable = { "apple", "orange", "banana" }
+
+print(collectgarbage("count"))
+
+mytable = nil
+
+print(collectgarbage("count"))
+
+print(collectgarbage("collect"))
+
+print(collectgarbage("count"))
+
+Lua 面向对象
+-- 元类
+Rectangle = {area = 0, length = 0, breadth = 0 }
+
+-- 派生类的方法 new 
+function Rectangle:new (o, length, breadth)
+    o = o or {}
+    setmetatable(o, self)
+    self.__index = self
+    self.length = length or 0
+    self.breadth = breadth or 0
+    self.area = length*breadth;
+    return 0
+end
+
+-- 派生类的方法 printArea
+function Rectangle:printArea()
+    print("矩形面积为 ", self.area)
+end
+
+-- 元类
+Rectangle = {area = 0, length = 0, breadth = 0}
+
+-- 派生类的方法 new
+function Rectangle:new (o,length,breadth)
+  o = o or {}
+  setmetatable(o, self)
+  self.__index = self
+  self.length = length or 0
+  self.breadth = breadth or 0
+  self.area = length*breadth;
+  return o
+end
+
+-- 派生类的方法 printArea
+function Rectangle:printArea ()
+  print("矩形面积为 ",self.area)
+end
+
+-- 元类
+Shape = { area = 0 }
+
+-- 基础类方法 new 
+function Shape:new (o, side)
+    o = o or {}
+    setmetatable(o, self)
+    self.__index = self
+    side = side or 0
+    self.area = side*side
+    return 0
+end
+
+-- 基础类方法 printArea 
+function Shape:printArea()
+    print("面积为 ", self.area)
+end
+
+-- 创建对象
+myshape = Shape:new(nil, 10)
+
+myshape:printArea()
+
+-- 元类
+Shape = {area = 0}
+
+-- 基础类方法 new
+function Shape:new (o,side)
+  o = o or {}
+  setmetatable(o, self)
+  self.__index = self
+  side = side or 0
+  self.area = side*side;
+  return o
+end
+
+-- 基础类方法 printArea
+function Shape:printArea ()
+  print("面积为 ",self.area)
+end
+
+-- 创建对象
+myshape = Shape:new(nil,10)
+
+myshape:printArea()
+
+-- Meta class
+Shape = { area = 0 }
+-- 基础类方法 new 
+function Shape:new (o, side)
+    o = o or {}
+    setmetatable(o, self)
+    self.
+end
+
+
+--]]
+-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+-- 元类
+Rectangle = { area = 0, length = 0, breadth = 0 }
+
+-- 派生类的方法 new 
+function Rectangle : new(o, length, breadth)
+    o = o or {}
+    setmetatable(o, self)
+    self.__index = self 
+    self.length = length or 0
+    self.breadth = breadth or 0
+    self.area = length * breadth;
+    return o
+end 
+
+-- 派生类的方法 printArea
+function Rectangle : printArea()
+    print("矩形面积为 ", self.area)
+end
 
 
 
